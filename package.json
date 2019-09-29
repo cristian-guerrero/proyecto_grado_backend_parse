@@ -1,0 +1,30 @@
+{
+  "name": "backend-sniffer",
+  "version": "0.0.1",
+  "description": "Backend para la aplicación sniffer con parse server",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "d": "nodemon app/index.js -e js,handlebars,env,html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cristian-guerrero/proyecto_grado_backend_parse.git"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@parse/fs-files-adapter": "^1.0.1",
+    "app-root-path": "^2.2.1",
+    "cors": "^2.8.5",
+    "dotenv": "^8.1.0",
+    "express": "^4.17.1",
+    "helmet": "^3.21.1",
+    "parse": "^2.7.1",
+    "parse-server": "^3.9.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.1",
+    "@types/parse": "^2.2.10",
+    "nodemon": "^1.19.2"
+  }
+}
