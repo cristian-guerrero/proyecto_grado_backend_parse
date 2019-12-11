@@ -19,7 +19,8 @@
     "dotenv": "^8.1.0",
     "express": "^4.17.1",
     "helmet": "^3.21.1",
-    "parse": "^2.7.1",
+    "jsonwebtoken": "^8.5.1",
+    "parse": "^2.10.0",
     "parse-server": "^3.9.0"
   },
   "devDependencies": {
