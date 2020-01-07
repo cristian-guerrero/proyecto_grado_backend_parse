@@ -75,9 +75,9 @@ if (process.env.ENVIRONMENT === 'development') {
 }
 
 httpServer.listen(port, () => {
-  console.log('facturación electrónica REST API running on localhost:' + port + restMountPath)
+  console.log('Backend sniffer REST API running on localhost:' + port + restMountPath)
   if (process.env.ENVIRONMENT === 'development') {
-    console.log('facturación electrónica Graphql running on localhost:' + port + 'graphql')
+    console.log('Backend sniffer Graphql running on localhost:' + port + 'graphql')
   }
 })
 

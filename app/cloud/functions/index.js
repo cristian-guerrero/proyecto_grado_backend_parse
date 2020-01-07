@@ -1,2 +1,5 @@
 require('./recibeSnifferData.function')
 require('./filter-colums.function')
+require('./create-jwt.function')
+require('./check-sniffer-token.function')
+require('./sniffer-config.function')

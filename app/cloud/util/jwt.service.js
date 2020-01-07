@@ -1,17 +1,18 @@
+const jwt = require('jsonwebtoken')
 /**
  * generate key
  * ssh-keygen -t rsa -b 2048 -m PEM -f jwtRS256.key
  * openssl rsa -in jwtRS256.key -pubout -outform PEM -out jwtRS256.key.pub
  */
 
- /**
-  * parse Config jwt-secret value format
-  * {
-  *    "key": "private key",
-  *    "pub": "public key"
-  *  }
-  * 
-  */
+/**
+ * parse Config jwt-secret value format
+ * {
+ *    "key": "private key",
+ *    "pub": "public key"
+ *  }
+ * 
+ */
 
 
 /**
@@ -29,6 +30,14 @@ const JWT_VERIFY_OPTIONS = {
   algorithms: ['RS256']
 }
 
+/**
+ * 
+ */
+const JWT_DECODE_OPTIONS = {
+  complete: false,
+  json: false
+}
+
 /*
 const appRootPath = require('app-root-path')
 const RSA = {
@@ -37,6 +46,18 @@ const RSA = {
 }
 */
 
+/**
+ *
+ * Firma un conjunto de datos con una clave privada
+ * el conjunto de datos debe ser un objeto o json
+ * Recibe como parametro opcional un tiempo de expiración dado en segundos
+ * por defecto el tiempo de expiración es de un día
+ * 
+ * @param {*} payload
+ * @param {*} privateKey
+ * @param {*} expireIn
+ * @returns
+ */
 async function sign(payload, privateKey, expireIn) {
   const options = JWT_OPTIONS
 
@@ -52,6 +73,13 @@ async function sign(payload, privateKey, expireIn) {
   })
 }
 
+/**
+ * Verifica un token con la clave publica
+ *
+ * @param {*} token
+ * @param {*} publicKey
+ * @returns
+ */
 async function verify(token, publicKey) {
   return new Promise((resolve, reject) => {
     // console.log('RSA_PRIVATE_KEY', RSA)
@@ -64,13 +92,18 @@ async function verify(token, publicKey) {
   })
 }
 
+/**
+ *
+ *
+ * @param {*} token
+ * @returns
+ */
 async function decode(token) {
   return new Promise((resolve, reject) => {
     try {
       const payload = jwt.decode(token, JWT_DECODE_OPTIONS)
-
-      console.log('<-------decode--------->', payload)
-      resolve(JSON.parse(payload))
+      // console.log('<-------decode--------->', payload)
+      resolve(payload)
     } catch (e) {
       reject(e)
     }

@@ -3,3 +3,5 @@ node_modules
 logs
 files
 .idea
+jwtRS256.key
+jwtRS256.key.pub
