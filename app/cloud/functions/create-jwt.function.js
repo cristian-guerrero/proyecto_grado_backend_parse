@@ -11,7 +11,7 @@ const jwt = require('../util/jwt.service')
  * 
  * 
  */
-Parse.Cloud.define('_create_jwt', async (request, response) => {
+Parse.Cloud.define('_create_jwt', async (request) => {
 
   throw new Error('No implementado')
   const { user, params } = request
@@ -44,12 +44,12 @@ function getDiffInSeconds(newDate) {
   return range.diff('seconds')
 }
 
-generateJwt().then()
+// generateJwt().then()
 
 
 function testRange() {
 
-  const da = moment('2019-12-30', 'YYYY-MM-DD')
+  const da = moment('2020-01-30', 'YYYY-MM-DD')
   console.log(Math.floor(da.toDate() / 1000))
 
 
