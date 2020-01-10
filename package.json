@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node index.js",
     "d": "nodemon app/index.js -e js,handlebars,env,html",
-    "dev": "yarn d"
+    "dev": "yarn d",
+    "doc": "yarn jsdoc app -r -P -R -- verbose -d doc "
   },
   "repository": {
     "type": "git",
@@ -29,6 +30,7 @@
   "devDependencies": {
     "@types/express": "^4.17.1",
     "@types/parse": "^2.2.10",
+    "jsdoc": "^3.6.3",
     "nodemon": "^1.19.2",
     "saslprep": "^1.0.3"
   }

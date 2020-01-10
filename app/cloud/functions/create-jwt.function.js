@@ -1,11 +1,19 @@
+const Moment = require('moment')
+const MomentRange = require('moment-range')
 
-const Moment = require('moment');
-const MomentRange = require('moment-range');
-
-const moment = MomentRange.extendMoment(Moment);
+const moment = MomentRange.extendMoment(Moment)
 const appRootPath = require('app-root-path')
 const fs = require('fs')
 const jwt = require('../util/jwt.service')
+
+/**
+ *
+ * generate key
+ * ssh-keygen -t rsa -b 2048 -m PEM -f jwtRS256.key
+ * openssl rsa -in jwtRS256.key -pubout -outform PEM -out jwtRS256.key.pub
+ *
+ * @returns {Promise<{pub: string, key: string}>}
+ */
 
 /**
  * Cloud Function para crear un registro en la clase Token
@@ -18,12 +26,13 @@ const jwt = require('../util/jwt.service')
  */
 Parse.Cloud.define('_create_sniffer_token', async (request) => {
 
-  const { user, params } = request
+  const {user, params} = request
 
-  if (!user) { throw new Error('Debe estar logueado para realizar esta acción') }
+  if (!user) {
+    throw new Error('Debe estar logueado para realizar esta acción')
+  }
 
-  const { expiry, sniffer } = params
-
+  const {expiry, sniffer} = params
 
 
   try {
@@ -33,10 +42,9 @@ Parse.Cloud.define('_create_sniffer_token', async (request) => {
     const newToken = await newTokenDocument(sniffer, user, expiry)
 
 
-    const hash = await  generateJwt(sniffer, newToken.id,  expireIn)
+    const hash = await generateJwt(sniffer, newToken.id, expireIn)
 
-    const tokenUpdated = await  updateNewTokenDocument(newToken, hash)
-
+    const tokenUpdated = await updateNewTokenDocument(newToken, hash)
 
 
     console.log(tokenUpdated)
@@ -70,7 +78,7 @@ async function newTokenDocument(snifferId, createdBy, expiry) {
   })
 
 
-  return await ob.save(null, {useMasterKey: true })
+  return await ob.save(null, {useMasterKey: true})
 }
 
 /**
@@ -79,13 +87,12 @@ async function newTokenDocument(snifferId, createdBy, expiry) {
  * @param hash
  * @returns {Promise<*>}
  */
-async function  updateNewTokenDocument(tokenObject, hash) {
+async function updateNewTokenDocument(tokenObject, hash) {
 
   tokenObject.set({hash})
 
-  return await tokenObject.save(null, {useMasterKey: true })
+  return await tokenObject.save(null, {useMasterKey: true})
 }
-
 
 
 /**
@@ -112,7 +119,6 @@ function getDiffInSeconds(newDate) {
 }
 
 
-
 /**
  *
  * @param sniffer
@@ -120,23 +126,10 @@ function getDiffInSeconds(newDate) {
  * @param expireIn
  * @returns {Promise<unknown>}
  */
-async function generateJwt(sniffer,id,  expireIn) {
+async function generateJwt(sniffer, id, expireIn) {
 
-  const {key, pub} = await readRSAKeys()
+  const {key, pub} = await jwt.getJWTKeys()
 
-  return  await jwt.sign({sniffer, id }, key, expireIn)
+  return await jwt.sign({sniffer, id}, key, expireIn)
 
-}
-
-/**
- * todo las claves deben venir de la base de datos
- *  modificar esta funcionalidad despues
- * @returns {Promise<{pub: string, key: string}>}
- */
-async function readRSAKeys() {
-
-  return {
-    key: fs.readFileSync(`${appRootPath.path}/jwtRS256.key`, 'utf-8'),
-    pub: fs.readFileSync(`${appRootPath.path}/jwtRS256.key.pub`, 'utf-8')
-  }
 }

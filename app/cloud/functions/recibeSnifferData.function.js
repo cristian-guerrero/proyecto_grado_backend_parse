@@ -1,4 +1,14 @@
-Parse.Cloud.define('_recibe_sniffer_data', async (request, response) => {
+/**
+ *
+ *
+ * recibir los datos que envìa el sniffer
+ * verificar que el token sea valido
+ *
+ *
+ *
+ *
+ */
+Parse.Cloud.define('_recibe_sniffer_data', async (request) => {
 
 
   // recibir los datos, crear los parse objects y guardar
@@ -13,7 +23,7 @@ const dataExample = {
   ipOrigen: null,
   ipDestino: null,
   protocolo: null,
-  tamaño: null,
+  tamano: null,
   ttl: 'tiempo de vida',
   carga: {},
   puertoOrigen: null,

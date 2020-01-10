@@ -75,7 +75,10 @@ async function sign(payload, privateKey, expireIn) {
 
 /**
  * Verifica un token con la clave publica
+ * Devulve el el token decodificado o un error si el token no es valido, a sido modificado o a caducado
  *
+ * Recibe como parametros el token que se quiere validar y la clave publica
+ * creada con la clave privada con la cual fue firmado
  * @param {*} token
  * @param {*} publicKey
  * @returns
@@ -111,9 +114,37 @@ async function decode(token) {
 }
 
 
+/**
+ *  Leer la configuración almacenda en la base de datos
+ *  donde se encuentrar las clave publica y privada condificadas en base64
+ *
+ * @returns {Promise<Object>}
+ */
+async function getJWTKeys() {
+
+  const q = new Parse.Query('Config')
+  q.equalTo('name', 'jwt-secret')
+
+  const config =  await q.first({useMasterKey: true})
+
+  if(!config.has('keyBase64') || !config.has('pubBase64')) {
+    throw new Error ('Falta la clave privada o la publica en la configuración almacenada en la base de datos')
+  }
+
+  const key = Buffer.from(config.get('keyBase64'), 'base64').toString()
+  const pub = Buffer.from(config.get('pubBase64'), 'base64').toString()
+
+  return  {
+    key, pub
+  }
+}
+
+
+
 module.exports = {
   sign,
   verify,
-  decode
+  decode,
+  getJWTKeys
 }
 

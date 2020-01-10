@@ -1,4 +1,4 @@
-Parse.Cloud.define('_sniffer_config', async (request, response) => {
+Parse.Cloud.define('_sniffer_config', async (request) => {
 
 
   /**
