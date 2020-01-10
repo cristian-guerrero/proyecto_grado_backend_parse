@@ -100,7 +100,7 @@ async function updateNewTokenDocument(tokenObject, hash) {
  * y la fecha de hoy
  *
  * @param {*} newDate
- * @returns
+ * @returns {*}
  */
 function getDiffInSeconds(newDate) {
 

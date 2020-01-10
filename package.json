@@ -7,7 +7,7 @@
     "start": "node index.js",
     "d": "nodemon app/index.js -e js,handlebars,env,html",
     "dev": "yarn d",
-    "doc": "yarn jsdoc app -r -P -R -- verbose -d doc "
+    "doc": "yarn jsdoc app -r -P package.json -R README.md  --verbose -d documentation "
   },
   "repository": {
     "type": "git",

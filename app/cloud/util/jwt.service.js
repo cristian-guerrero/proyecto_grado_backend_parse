@@ -56,7 +56,7 @@ const RSA = {
  * @param {*} payload
  * @param {*} privateKey
  * @param {*} expireIn
- * @returns
+ * @returns {*}
  */
 async function sign(payload, privateKey, expireIn) {
   const options = JWT_OPTIONS
@@ -81,7 +81,7 @@ async function sign(payload, privateKey, expireIn) {
  * creada con la clave privada con la cual fue firmado
  * @param {*} token
  * @param {*} publicKey
- * @returns
+ * @returns {*}
  */
 async function verify(token, publicKey) {
   return new Promise((resolve, reject) => {
@@ -99,7 +99,7 @@ async function verify(token, publicKey) {
  *
  *
  * @param {*} token
- * @returns
+ * @returns {*}
  */
 async function decode(token) {
   return new Promise((resolve, reject) => {
