@@ -34,12 +34,12 @@ Parse.Cloud.define('_create_sniffer_token', async (request) => {
 
   const {expiry, sniffer} = params
 
-
+  let newToken
   try {
     //
     const expireIn = getDiffInSeconds(expiry)
 
-    const newToken = await newTokenDocument(sniffer, user, expiry)
+    newToken = await newTokenDocument(sniffer, user, expiry)
 
 
     const hash = await generateJwt(sniffer, newToken.id, expireIn)
@@ -52,6 +52,10 @@ Parse.Cloud.define('_create_sniffer_token', async (request) => {
 
   } catch (e) {
     console.log(e)
+
+    if (newToken) {
+      await newToken.destroy({useMasterKey: true})
+    }
     throw  e
   }
 
@@ -131,5 +135,9 @@ async function generateJwt(sniffer, id, expireIn) {
   const {key, pub} = await jwt.getJWTKeys()
 
   return await jwt.sign({sniffer, id}, key, expireIn)
+
+}
+
+async function rollback(ob) {
 
 }

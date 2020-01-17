@@ -1,13 +1,35 @@
+const jwt = require('../util/jwt.service.js')
+
+
+/**
+ * TODO
+ *  cuando se pida la configuración se debe crear el objeto en la clase data
+ *  y devolverlo para que se puedan guardar los detalles asociados a ese objeto
+ *  cuando el sniffer mande los datos.
+ *  tomar el id del header
+ */
 Parse.Cloud.define('_sniffer_config', async (request) => {
 
 
-  /**
-   * TODO
-   * cuando se pida la configuración se debe crear el objeto en la clase data
-   * y devolverlo para que se puedan guardar los detalles asociados a ese objeto
-   * cuando el sniffer mande los datos.
-   * tomar el id del header
-   */
+  const {params, headers} = request
+
+  if(!headers['sniffer-token']){
+
+    throw new Error('Se necesita la cabecera sniffer-token')
+  }
+
+
+
+  const snifferToken = headers['sniffer-token']
+
+
+   const tokenData = await getTokenData(snifferToken)
+
+  console.log('----------- _sniffer_config ----------', tokenData)
+
+  // await createData()
+
+
   return {
 
     repeticiones: 10,
@@ -18,3 +40,29 @@ Parse.Cloud.define('_sniffer_config', async (request) => {
     maximoTiempo: 3600
   }
 })
+
+
+async function createData() {
+
+  const ob = new Parse.Object('Data')
+
+  return await  ob.save(null, {useMasterKey: true })
+}
+
+
+async function getTokenData(token) {
+
+  try {
+
+    const {key, pub} = await jwt.getJWTKeys()
+    const tokenData = await jwt.verify(token, pub)
+
+    console.log('--------- token data ---------', tokenData)
+
+    return tokenData
+  } catch (e) {
+    throw new Error('El token enviado puede estar caducado, modificado o anulado, contatese con el administrador')
+  }
+}
+
+
