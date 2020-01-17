@@ -1,8 +1,8 @@
 require('dotenv').config()
-const appRoot = require('app-root-path');
+const appRoot = require('app-root-path')
 const express = require('express')
 const app = express()
-const { default: ParseServer, ParseGraphQLServer } = require('parse-server')
+const {default: ParseServer, ParseGraphQLServer} = require('parse-server')
 const FSFilesAdapter = require('@parse/fs-files-adapter')
 const cors = require('cors')
 const helmet = require('helmet')
@@ -30,7 +30,6 @@ if (process.env.ENVIRONMENT === 'production') {
 process.env.PUBLIC_SERVER_URL = publicServerURL
 
 
-
 const parseServer = new ParseServer({
   maxUploadSize: '16mb',
   databaseURI: process.env.MONGODB_URI,
@@ -51,10 +50,21 @@ const parseServer = new ParseServer({
   //},
 })
 
+/**
+ * Atrapar la ip del usuario y pasarla como header para que pueda
+ * ser utilizada en la parse function
+ */
+app.use(`${restMountPath}/functions*`, function (req, res, next) {
+  //
+  req.headers['x-real-ip'] = req.headers['x-forwarded-for'] || req.connection.remoteAddress
+  next()
+})
 
-if (process.env.CORS === '1') { app.use(cors()) }
+if (process.env.CORS === '1') {
+  app.use(cors())
+}
 app.use(helmet())
-app.use(`/${restMountPath}/static`, express.static(path.join(__dirname, '/public')))
+app.use(`${restMountPath}/static`, express.static(path.join(__dirname, '/public')))
 app.use(restMountPath, parseServer.app)
 app.get('/', function (req, res) {
   res.status(200).send('-.-,')

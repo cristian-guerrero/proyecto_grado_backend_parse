@@ -13,25 +13,29 @@ Parse.Cloud.define('_sniffer_config', async (request) => {
 
   const {params, headers} = request
 
-  if(!headers['sniffer-token']){
+  if (!headers['sniffer-token']) {
 
     throw new Error('Se necesita la cabecera sniffer-token')
   }
 
 
-
   const snifferToken = headers['sniffer-token']
 
 
-   const tokenData = await getTokenData(snifferToken)
+  const tokenData = await getTokenData(snifferToken)
 
-  console.log('----------- _sniffer_config ----------', tokenData)
+  // console.log('----------- _sniffer_config ----------', tokenData, headers)
 
-  // await createData()
+  const dataDocument = await createData(tokenData, headers)
 
+  const snifferConfig = await getSnifferConfig(tokenData.sniffer)
 
   return {
 
+    ...snifferConfig,
+    session: dataDocument.id,
+    //todo borrar los siguentes datos de pruebas solo retornar los
+    // datos que devuelva la funcion getSnifferConfig
     repeticiones: 10,
     ipsOrigin: ['192.168.1.100'],
     ipsDestino: ['60.44.33.1'],
@@ -42,11 +46,23 @@ Parse.Cloud.define('_sniffer_config', async (request) => {
 })
 
 
-async function createData() {
+async function createData(data, headers) {
+
 
   const ob = new Parse.Object('Data')
 
-  return await  ob.save(null, {useMasterKey: true })
+  const sniffer = Parse.Object.createWithoutData(data.sniffer)
+  sniffer.className = 'Sniffer'
+
+  const token = Parse.Object.createWithoutData(data.id)
+  token.className = 'Token'
+
+
+  console.log('------ headers ', headers)
+  return await ob.save({
+    sniffer, token,
+    clientIp: headers['x-real-ip']
+  }, {useMasterKey: true})
 }
 
 
@@ -55,14 +71,28 @@ async function getTokenData(token) {
   try {
 
     const {key, pub} = await jwt.getJWTKeys()
-    const tokenData = await jwt.verify(token, pub)
-
-    console.log('--------- token data ---------', tokenData)
-
-    return tokenData
+    return await jwt.verify(token, pub)
   } catch (e) {
     throw new Error('El token enviado puede estar caducado, modificado o anulado, contatese con el administrador')
   }
 }
 
 
+async function getSnifferConfig(snifferId) {
+  const className = 'Sniffer'
+
+
+  try {
+
+    // todo mirar si se pasa la configuración del sniffer a otra clase aparte
+    const q = new Parse.Query(className)
+    const sniffer = await q.get(snifferId, {useMasterKey: true})
+
+    return sniffer.get('config')
+  } catch (e) {
+
+    console.log(e)
+    throw new Error(`El sniffer con id ${snifferId} no pudo ser encontrado`)
+  }
+
+}
