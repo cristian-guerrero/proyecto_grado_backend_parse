@@ -1,5 +1,5 @@
 const jwt = require('../util/jwt.service.js')
-
+const moment = require('moment')
 
 /**
  * TODO
@@ -7,6 +7,8 @@ const jwt = require('../util/jwt.service.js')
  *  y devolverlo para que se puedan guardar los detalles asociados a ese objeto
  *  cuando el sniffer mande los datos.
  *  tomar el id del header
+ *
+ *
  */
 Parse.Cloud.define('_sniffer_config', async (request) => {
 
@@ -45,7 +47,14 @@ Parse.Cloud.define('_sniffer_config', async (request) => {
   }
 })
 
-
+/**
+ *
+ * Función para crear el documento en la clase Data
+ * Extrae datos de los header y del token decodificado
+ * @param data
+ * @param headers
+ * @returns {Promise<Object>}
+ */
 async function createData(data, headers) {
 
 
@@ -57,27 +66,59 @@ async function createData(data, headers) {
   const token = Parse.Object.createWithoutData(data.id)
   token.className = 'Token'
 
-
-  console.log('------ headers ', headers)
   return await ob.save({
     sniffer, token,
     clientIp: headers['x-real-ip']
   }, {useMasterKey: true})
 }
 
-
+/**
+ * Funcion que sirve para extraer los datos codificados que llegan en el token
+ * Levanta un error si el token esta modificado, caducado o anulado
+ * Verifica que la fecha de expiración en almacendad en la base de datos sea superior a la del día de hoy
+ * @param token
+ * @returns {Promise<void>}
+ */
 async function getTokenData(token) {
 
   try {
 
     const {key, pub} = await jwt.getJWTKeys()
-    return await jwt.verify(token, pub)
+    const tokenData = await jwt.verify(token, pub)
+
+    console.log('---------- token data ---', tokenData)
+
+    const q = new Parse.Query('Token')
+
+    const tokenDocument = await q.get(tokenData.id, {useMasterKey: true})
+
+    /*
+    if(tokenDocument.get('')) {
+
+    }
+
+     */
+
+    const today = moment().startOf('d')
+    const tokenExpiry = moment(tokenDocument.get('expiry'))
+
+    if (tokenExpiry.isBefore(today)) {
+      throw new Error('El token ha espirado')
+    }
+
+    return tokenData
+
   } catch (e) {
+    console.log('------> getTokenData error ', e)
     throw new Error('El token enviado puede estar caducado, modificado o anulado, contatese con el administrador')
   }
 }
 
-
+/**
+ *
+ * @param snifferId
+ * @returns {Promise<any>}
+ */
 async function getSnifferConfig(snifferId) {
   const className = 'Sniffer'
 

@@ -15,9 +15,13 @@ Parse.Cloud.beforeSave('Token', async request => {
   const {original, ip, object, user, master, log} = request
 
 
-    if(!master) {
-      throw new Error('No tiene permiso para realizar esta acción')
-    }
+  // la unica acción que se permite es desactivar el token
+
+
+  if (!master && !original &&
+    original.get('active') && !object.get('active')) {
+    throw new Error('No tiene permiso para realizar esta acción')
+  }
 
 
 })
