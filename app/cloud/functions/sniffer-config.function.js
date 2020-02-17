@@ -42,7 +42,8 @@ Parse.Cloud.define('_sniffer_config', async (request) => {
     ipsOrigin: ['192.168.1.100'],
     ipsDestino: ['60.44.33.1'],
     protocolos: ['ip', 'xmpp'],
-    id: 'parse id',
+    id: dataDocument.id ,
+    sessionId: dataDocument.id,
     maximoTiempo: 3600
   }
 })

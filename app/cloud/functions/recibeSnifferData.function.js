@@ -21,15 +21,66 @@ Parse.Cloud.define('_recibe_sniffer_data', async (request) => {
 
   // todo mirar si se pone el sessionId como header  o como body
   //  tambien para el sessionToken
-  const {sessionId, sessionToken, src, dst, sport, dport, proto, time, info} = params
+//   const {sessionId, sessionToken, src, dst, sport, dport, proto, time, info} = params
 
   // info = data
 
   // recibir los datos, crear los parse objects y guardar
 
+    await saveAll(params)
 
   return 'ok'
 })
+
+
+function dataPointer(id) {
+
+
+  const ob = Parse.Object.createWithoutData(id)
+  ob.className = 'Data'
+
+  return ob
+
+}
+
+async function createDetaiOb(params, dataObject ) {
+  const { src, dst, sport, dport, proto, time, info} = params
+
+
+
+  const detailsObject = new Parse.Object('DataDetail')
+
+  detailsObject.set({
+    src, dst, sport, dport, proto, time,info,
+    data: dataObject
+  })
+
+  return detailsObject
+  // return await detailsObject.save(null, {useMasterKey: true})
+
+
+}
+
+async function saveAll(params ) {
+  const {sessionId, data } = params
+
+  const dataObject = dataPointer(sessionId)
+  const objects  = []
+
+  if (!params.data) {
+    return
+  }
+
+  for (const x of  data) {
+    const obToSave = {...x, data: dataObject}
+
+    objects.push(await createDetaiOb(obToSave, dataObject))
+  }
+
+  return await Parse.Object.saveAll(objects)
+}
+
+
 
 const dataExample = {
 
