@@ -6,4 +6,4 @@ files
 jwtRS256.key
 jwtRS256.key.pub
 documentation/
-database-example/
+#database-example/
