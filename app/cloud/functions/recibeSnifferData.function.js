@@ -19,6 +19,7 @@ Parse.Cloud.define('_recibe_sniffer_data', async (request) => {
 
 const dataExample = {
 
+  iface: null,
   fecha: null,
   ipOrigen: null,
   ipDestino: null,
@@ -33,6 +34,7 @@ const dataExample = {
 
 const snifferConfig = {
 
+  iface: 'enp0s3',
   repeticiones: 10,
   ipsOrigin: ['192.168.1.100'],
   ipsDestino: ['60.44.33.1'],
