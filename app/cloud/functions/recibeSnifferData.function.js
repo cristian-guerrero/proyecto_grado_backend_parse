@@ -11,8 +11,22 @@
 Parse.Cloud.define('_recibe_sniffer_data', async (request) => {
 
 
+  const {params, headers} = request
+
+
+  if (!headers['sniffer-token']) {
+
+    throw new Error('Se necesita la cabecera sniffer-token')
+  }
+
+  // todo mirar si se pone el sessionId como header  o como body
+  //  tambien para el sessionToken
+  const {sessionId, sessionToken, src, dst, sport, dport, proto, time, info} = params
+
+  // info = data
+
   // recibir los datos, crear los parse objects y guardar
-  
+
 
   return 'ok'
 })
