@@ -38,13 +38,13 @@ Parse.Cloud.define('_sniffer_config', async (request) => {
     session: dataDocument.id,
     //todo borrar los siguentes datos de pruebas solo retornar los
     // datos que devuelva la funcion getSnifferConfig
-    repeticiones: 10,
-    ipsOrigin: ['192.168.1.100'],
-    ipsDestino: ['60.44.33.1'],
-    protocolos: ['ip', 'xmpp'],
+    // repeticiones: 10,
+    // ipsOrigin: ['192.168.1.100'],
+    // ipsDestino: ['60.44.33.1'],
+    // protocolos: ['ip', 'xmpp'],
     id: dataDocument.id ,
     sessionId: dataDocument.id,
-    maximoTiempo: 3600
+    // maximoTiempo: 3600
   }
 })
 
