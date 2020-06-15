@@ -103,7 +103,7 @@ async function getTokenData(token) {
     const today = moment().startOf('d')
     const tokenExpiry = moment(tokenDocument.get('expiry'))
 
-    if (tokenExpiry.isBefore(today)) {
+    if (tokenExpiry.isBefore(today) || !tokenDocument.get('active')) {
       throw new Error('El token ha espirado')
     }
 
